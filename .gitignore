@@ -1,0 +1,5 @@
+.env
+.env.local
+.D5_Store
+node_modules/
+package-lock.json
