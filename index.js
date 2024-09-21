@@ -1,13 +1,22 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const config = require('./config')
-const userRouter = require('./userRoutes')
+const userRouter = require('./userRoutes');
+const cookieParser = require('cookie-parser');
+const morgan = require('morgan');
+const cors = require('cors');
 
 
 //create server
 const app = express();
 
 app.use(express.json());
+app.use(morgan('dev'));
+app.use(cookieParser());
+app.use(cors({
+    origin: '*',//allow all origins
+    credentials: true,
+}));
 
 //routes
 app.use('/api/users',userRouter)

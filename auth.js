@@ -1,21 +1,28 @@
 const jwt = require("jsonwebtoken");
 const config = require("./config");
-const  User  = require("./userModel");
+const user = require("./userModel");
 
-const Auth = {
-    isAuth : async (req, res, next) => {
-        const token = req.headers["x-access-token"];
+const auth = {
+    isAuth: async (req, res, next) => {
+        const token = req.cookies.token;
+        //if token is not present throw error
         if (!token) {
-            return res.status(401).send({ auth: false, message: "UnAuthorized User" });
+            return res.status(401).json({ message: "Unauthorized" });
         }
+        //verify token
         try {
-            const decoded = jwt.verify(token, config.secret);
-            req.userId = decoded.id;
+            const decodedToken = jwt.verify(token, config.JWT_secret)
+
+            //get user from token
+            req.userId = decodedToken.id;
+
             next();
-        } catch (err) { 
-            return res.status(401).send({ auth: false, message: err.message});
+        }
+        catch (error) {
+            return res.status(500).json({ message: "Unauthorized" });
         }
     }
 }
 
-module.exports = Auth;
+//export module
+module.exports = auth
