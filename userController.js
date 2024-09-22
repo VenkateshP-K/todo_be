@@ -1,4 +1,5 @@
 const User = require("./userModel");
+const Todo = require("./todoModel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const config = require("./config");
@@ -89,6 +90,38 @@ const UserController = {
             res.status(200).json({ message: 'Logged out successfully' });
         } catch (error) {
             console.error('Error in logout:', error);
+            res.status(500).json({ message: error.message });
+        }
+    },
+
+    //create a todo
+    CreateTodo: async (req, res) => {
+        try {
+            const { title, description } = req.body;
+            const userId = req.userId;
+            const todo = new Todo({
+                title,
+                description,
+                userId
+            });
+            await todo.save();
+            res.status(201).json({ message: 'Todo created successfully', todo });
+        } catch (error) {
+            res.status(500).json({ message: error.message });
+        }
+    },
+
+    //delete a todo
+    DeleteTodo : async (req,res) => {
+        try{
+            const todoId = req.params.id;
+            const todo = await Todo.findByIdAndDelete(todoId);
+            if(!todo){
+                return res.status(404).json({ message: 'Todo not found' });
+            }
+            res.status(200).json({ message: 'Todo deleted successfully' });
+        }
+        catch(error){   
             res.status(500).json({ message: error.message });
         }
     }
