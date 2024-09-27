@@ -64,25 +64,17 @@ const UserController = {
 
     //get the current user
     Me: async (req, res) => {
-       try{
-        //get the user id from the req object
-        const userId = req.userId;
-
-        //find the user id from db
-        const user = await User.findById(userId);
-
-        //if the user is not found
-        if(!user){
-            return res.status(500).json({ message: "User not found" });
+        try {
+          const user = await User.findById(req.userId);
+          if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+          }
+          res.status(200).json({ user });
+        } catch (error) {
+          console.error('Error in getMe:', error);
+          res.status(500).json({ message: error.message });
         }
-
-        //return the user
-        res.status(200).json({ user });
-       }
-       catch(error){
-        res.status(500).json({ message: error.message });
-       }
-    },
+      },
 
     //logout function
     Logout: async (req, res) => {
