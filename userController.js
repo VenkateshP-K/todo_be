@@ -47,12 +47,13 @@ const UserController = {
             }
 
             const token = jwt.sign({ id: user._id }, config.JWT_secret, { expiresIn: "24h" });
+            const isProduction = process.env.NODE_ENV === 'production';
 
             res.cookie("token", token, {
                 httpOnly: true,
-                secure: true,
+                secure: isProduction,
                 sameSite: "none",
-                maxAge: 24 * 60 * 60 * 1000
+                maxAge: 24 * 60 * 60 * 1000 // 24 hours
             });
 
             res.status(200).json({ message: "User logged in successfully", token, user: { id: user._id, name: user.userName } });
