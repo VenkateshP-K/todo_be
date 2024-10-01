@@ -4,22 +4,17 @@ const user = require("./userModel");
 
 const auth = {
     isAuth: async (req, res, next) => {
-        const token = req.cookies.token || req.headers.authorization?.split(' ')[1];
-        //if token is not present throw error
+        const token = req.cookies.token;  // Extract token from cookies
         if (!token) {
             return res.status(401).json({ message: "Unauthorized" });
         }
-        //verify token
+        
         try {
-            const decodedToken = jwt.verify(token, config.JWT_secret)
-
-            //get user from token
-            req.userId = decodedToken.id;
-
+            const decodedToken = jwt.verify(token, config.JWT_secret);  // Decode the token
+            req.userId = decodedToken.id;  // Set userId to request object
             next();
-        }
-        catch (error) {
-            return res.status(500).json({ message: "Unauthorized" });
+        } catch (error) {
+            return res.status(401).json({ message: "Unauthorized" });
         }
     }
 }
