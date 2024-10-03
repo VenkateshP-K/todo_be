@@ -4,15 +4,16 @@ const user = require("./userModel");
 
 const auth = {
     isAuth: async (req, res, next) => {
-        const token = req.cookies.token;
-        console.log("Token from cookies:", token);
+        const token = req.cookies.token || req.headers['authorization'];
+        console.log("Received token:", token);
 
         if (!token) {
             return res.status(401).json({ message: "Unauthorized: No token provided" });
         }
 
         try {
-            const decodedToken = jwt.verify(token, config.JWT_secret);
+            const cleanToken = token.startsWith('Bearer ') ? token.slice(7) : token;
+            const decodedToken = jwt.verify(cleanToken, config.JWT_secret);
             console.log("Decoded token:", decodedToken);
             req.userId = decodedToken.id;
             next();
@@ -22,7 +23,5 @@ const auth = {
         }
     }
     }
-    
-
 //export module
 module.exports = auth
