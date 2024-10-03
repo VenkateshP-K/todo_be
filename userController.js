@@ -51,9 +51,9 @@ const UserController = {
 
             res.cookie("token", token, {
                 httpOnly: true,
-                secure: isProduction,  // Ensure this is false in development (local testing)
-                sameSite: isProduction ? "none" : "lax",  // Important for cross-site cookies
-                maxAge: 24 * 60 * 60 * 1000,  // 24 hours
+                secure: process.env.NODE_ENV === 'production',  // Ensure this works in development
+                sameSite: process.env.NODE_ENV === 'production' ? "none" : "lax",
+                maxAge: 24 * 60 * 60 * 1000  // 24 hours
             });
 
             res.status(200).json({ message: "User logged in successfully", token, user: { id: user._id, name: user.userName } });
