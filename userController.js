@@ -32,50 +32,39 @@ const UserController = {
         }
     },
 
-    //login function
+    //login a user
     Login: async (req, res) => {
         try {
             const { email, password } = req.body;
             const user = await User.findOne({ email });
             if (!user) {
+                return res.status(401).json({ message: "Unauthorized User" });
+            }
+            const isPasswordValid = await bcrypt.compare(password, user.password);
+            if (!isPasswordValid) {
                 return res.status(401).json({ message: "Invalid email or password" });
             }
-    
-            const isMatch = await bcrypt.compare(password, user.password);
-            if (!isMatch) {
-                return res.status(401).json({ message: "Invalid email or password" });
-            }
-    
-            const token = jwt.sign({ id: user._id }, config.JWT_secret, { expiresIn: "24h" });
-    
-            res.cookie("token", token, {
-                httpOnly: true,
-                secure: true,
-                sameSite: 'none',
-                maxAge: 24 * 60 * 60 * 1000  // 24 hours
-            });
-    
-            res.status(200).json({ 
-                message: "User logged in successfully", 
-                user: { id: user._id, name: user.userName }
-            });
+            const token = jwt.sign({ id: user._id }, config.JWT_secret,);
+            res.cookie('token', token, {
+                 httpOnly: true,
+                 secure : true,
+                 sameSite : 'none',
+                 MaxAge : new Date(Date.now() + 24 * 60 * 60 * 1000)});
+            res.status(200).json({ message: 'Logged in successfully', user, token });
         } catch (error) {
             res.status(500).json({ message: error.message });
         }
     },
-    //get the current user
-    Me: async () => {
+    //get logged in user
+    Me: async (req, res) => {
         try {
-            const token = localStorage.getItem('token');
-            console.log('Token in request:', token);  // Log the token before the request
-            return await protectedInstance.get('/users/me', {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            const user = await User.findById(req.userId);
+            res.status(200).json({ user });
         } catch (error) {
-            console.error("Me error: ", error);
-            throw error;
+            res.status(500).json({ message: error.message });
         }
     },
+    
     //logout function
     Logout: async (req, res) => {
         try {
@@ -100,6 +89,17 @@ const UserController = {
             await todo.save();
             res.status(201).json({ message: 'Todo created successfully', todo });
         } catch (error) {
+            res.status(500).json({ message: error.message });
+        }
+    },
+
+    //get all todos
+    GetTodos: async (req, res) => {
+        try {
+            const userId = req.userId;
+            const todos = await Todo.find({ userId });
+            res.status(200).json({ todos });
+        } catch (error) {   
             res.status(500).json({ message: error.message });
         }
     },

@@ -4,23 +4,33 @@ const user = require("./userModel");
 
 const auth = {
     isAuth: async (req, res, next) => {
-        // Check for the token in the Authorization header
-        const authHeader = req.headers['authorization'];
-        const token = authHeader && authHeader.startsWith('Bearer ') ? authHeader.slice(7) : null;
-        
-        if (!token) {
-            return res.status(401).json({ message: "Unauthorized: No token provided" });
-        }
-
         try {
-            const decodedToken = jwt.verify(token, config.JWT_secret);
-            req.userId = decodedToken.id;  // Attach user ID to request object
-            next();
+            // get the token from the request cookies
+            const token = request.cookies.token;
+
+            // if the token is not present, return an error message
+            if (!token) {
+                return res.status(401).json({ message: 'Unauthorized' });
+            }
+
+            // verify the token
+            try {
+                const decodedToken = jwt.verify(token, config.JWT_secret);
+
+                // get the user id from the decoded token and 
+                // attach it to the request object
+                req.userId = decodedToken.id;
+
+                // call the next middleware
+                next();
+            } catch (error) {
+                res.status(401).json({ message: 'invalid token' });
+            }
         } catch (error) {
-            console.error("Token verification error:", error);
-            return res.status(401).json({ message: "Unauthorized: Invalid token" });
+            res.status(500).json({ message: error.message });  
         }
-    }
-    }
+}
+}
+
 //export module
 module.exports = auth
