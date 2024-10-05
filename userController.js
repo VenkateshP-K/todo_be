@@ -101,10 +101,10 @@ const UserController = {
     //get all todos
     GetTodos: async (req, res) => {
         try {
-            const userId = req.userId;
-            const todos = await Todo.find({ userId });
-            res.status(200).json({ todos });
-        } catch (error) {   
+            const todos = await Todo.find().populate('rooms');
+            res.status(200).json(todos);
+        } catch (error) {
+            console.error('Error in get All todos:', error);
             res.status(500).json({ message: error.message });
         }
     },
