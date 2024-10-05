@@ -98,17 +98,6 @@ const UserController = {
         }
     },
 
-    //get all todos
-    GetTodos: async (req, res) => {
-        try {
-            const todos = await Todo.find().populate('rooms');
-            res.status(200).json(todos);
-        } catch (error) {
-            console.error('Error in get All todos:', error);
-            res.status(500).json({ message: error.message });
-        }
-    },
-
     //delete a todo
     DeleteTodo : async (req,res) => {
         try{
