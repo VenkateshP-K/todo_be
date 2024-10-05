@@ -46,10 +46,11 @@ const UserController = {
             }
             const token = jwt.sign({ id: user._id }, config.JWT_secret,);
             res.cookie('token', token, {
-                 httpOnly: true,
-                 secure : true,
-                 sameSite : 'none',
-                 MaxAge : new Date(Date.now() + 24 * 60 * 60 * 1000)});
+                httpOnly: true,
+                secure: true,  
+                sameSite: 'none',  // Allows cross-origin cookie
+                maxAge: 24 * 60 * 60 * 1000,  // Token expiry: 1 day
+            });
             res.status(200).json({ message: 'Logged in successfully', user, token });
         } catch (error) {
             res.status(500).json({ message: error.message });
