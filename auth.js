@@ -3,33 +3,25 @@ const config = require("./config");
 const user = require("./userModel");
 
 const auth = {
-    isAuth: (req, res, next) => {
-        try {
-            // get the token from the request cookies
-            const token = req.cookies.token;
+    isAuth: async (req, res, next) => {
+        const token = req.cookies.token || req.headers['authorization'];
+        console.log("Received token:", token);
 
-            // if the token is not present, return an error message
-            if (!token) {
-                return res.status(401).json({ message: 'Unauthorized' });
-            }
-
-            // verify the token
-            try {
-                const decodedToken = jwt.verify(token, config.JWT_secret);
-
-                // get the user id from the decoded token and 
-                // attach it to the request object
-                req.userId = decodedToken.id;
-
-                // call the next middleware
-                next();
-            } catch (error) {
-                res.status(401).json({ message: 'invalid token' });
-            }
-        } catch (error) {
-            res.status(500).json({ message: error.message });  
+        if (!token) {
+            return res.status(401).json({ message: "Unauthorized: No token provided" });
         }
-}
+
+        try {
+            const cleanToken = token.startsWith('Bearer ') ? token.slice(7) : token;  // Remove "Bearer " prefix
+            const decodedToken = jwt.verify(cleanToken, config.JWT_secret);
+            console.log("Decoded token:", decodedToken);
+            req.userId = decodedToken.id;
+            next();
+        } catch (error) {
+            console.error("Token verification error:", error);
+            return res.status(401).json({ message: "Unauthorized: Invalid token" });
+        }
+    }
 }
 
 //export module
