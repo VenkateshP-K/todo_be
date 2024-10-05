@@ -56,23 +56,36 @@ const UserController = {
         }
     },
     //get logged in user
-    Me: async (req, res) => {
+    Me: async (request, response) => {
         try {
-            const user = await User.findById(req.userId);
-            res.status(200).json({ user });
+            // get the user id from the request object
+            const userId = request.userId;
+
+            // find the user by id from the database
+            const user = await User.findById(userId).select('-passwordHash -__v -_id');
+
+            // if the user does not exist, return an error message
+            if (!user) {
+                return response.status(400).json({ message: 'user not found' });
+            }
+
+            // return the user details
+            response.status(200).json({ user });
         } catch (error) {
-            res.status(500).json({ message: error.message });
+            response.status(500).json({ message: error.message });
         }
     },
     
     //logout function
-    Logout: async (req, res) => {
+    logout: async (request, response) => {
         try {
-            res.clearCookie('token');
-            res.status(200).json({ message: 'Logged out successfully' });
+            // clear the token cookie
+            response.clearCookie('token');
+
+            // return a success message
+            response.status(200).json({ message: 'logout successful' });
         } catch (error) {
-            console.error('Error in logout:', error);
-            res.status(500).json({ message: error.message });
+            response.status(500).json({ message: error.message });
         }
     },
 
