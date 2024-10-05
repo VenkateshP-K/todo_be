@@ -57,7 +57,7 @@ const UserController = {
     },
    
     //me function
-    getMe: async (req, res) => {
+    Me: async (req, res) => {
         try {
           const user = await User.findById(req.userId);
           if (!user) {
@@ -71,7 +71,7 @@ const UserController = {
       },
     
     //logout function
-    logout: async (req, res) => {
+    Logout: async (req, res) => {
         try {
             res.clearCookie('token');
             res.status(200).json({ message: 'Logged out successfully' });
