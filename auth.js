@@ -4,18 +4,17 @@ const user = require("./userModel");
 
 const auth = {
     isAuth: async (req, res, next) => {
-        const token = req.cookies.token || req.headers['authorization'];
-        console.log("Received token:", token);
-
+        // Check for the token in the Authorization header
+        const authHeader = req.headers['authorization'];
+        const token = authHeader && authHeader.startsWith('Bearer ') ? authHeader.slice(7) : null;
+        
         if (!token) {
             return res.status(401).json({ message: "Unauthorized: No token provided" });
         }
 
         try {
-            const cleanToken = token.startsWith('Bearer ') ? token.slice(7) : token;
-            const decodedToken = jwt.verify(cleanToken, config.JWT_secret);
-            console.log("Decoded token:", decodedToken);
-            req.userId = decodedToken.id;
+            const decodedToken = jwt.verify(token, config.JWT_secret);
+            req.userId = decodedToken.id;  // Attach user ID to request object
             next();
         } catch (error) {
             console.error("Token verification error:", error);
