@@ -13,10 +13,15 @@ const app = express();
 app.use(express.json());
 app.use(morgan('dev'));
 app.use(cookieParser());
-app.use(cors({
-    origin: 'http://localhost:5173/',
-    credentials: true
-}));
+const corsOptions = {
+    origin: ['http://localhost:5173', 'https://hotelbooking-demo.netlify.app', 'https://hotel-booking-be-6h4d.onrender.com'],
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  };
+
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 
 //routes
 app.use('/api/users',userRouter)
