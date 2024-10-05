@@ -3,7 +3,7 @@ const config = require("./config");
 const user = require("./userModel");
 
 const auth = {
-    isAuth: async (req, res, next) => {
+    isAuth: (req, res, next) => {
         try {
             // get the token from the request cookies
             const token = req.cookies.token;
