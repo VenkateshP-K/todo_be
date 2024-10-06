@@ -98,6 +98,22 @@ const UserController = {
             res.status(500).json({ message: error.message });
         }
     },
+    //get user todos
+    GetTodos : async (req,res) => {
+       try{
+        const token = req.cookies.token || req.headers['authorization'].split(' ')[1];
+        const userId = req.userId;
+        const todos = await Todo.find({userId});
+
+        if(!todos){
+            return res.status(404).json({ message: 'No Todos found' });
+        }
+
+        res.status(200).json({ todos });
+       }catch(error){
+        res.status(500).json({ message: error.message });
+       }
+    },
 
     //delete a todo
     DeleteTodo : async (req,res) => {

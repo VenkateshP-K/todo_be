@@ -9,6 +9,7 @@ userRouter.post("/login", UserController.Login);
 userRouter.post("/logout", Auth.isAuth, UserController.Logout);
 userRouter.get("/me", Auth.isAuth, UserController.Me);
 userRouter.post("/createTodo", Auth.isAuth, UserController.CreateTodo);
+userRouter.get("/getTodos", Auth.isAuth, UserController.GetTodos);
 userRouter.delete("/deleteTodo/:id", Auth.isAuth, UserController.DeleteTodo);
 
 module.exports = userRouter;
