@@ -101,8 +101,8 @@ const UserController = {
     //get user todos
     GetTodos : async (req,res) => {
        try{
-        const token = req.cookies.token || req.headers['authorization'].split(' ')[1];
         const userId = req.userId;
+        console.log("Fetching todos for user:", userId);  // Log the user ID for debugging
         const todos = await Todo.find({userId});
 
         if(!todos){
