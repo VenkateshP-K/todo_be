@@ -14,6 +14,10 @@ const todoSchema = new mongoose.Schema({
         enum : ['completed', 'incomplete'],
         default: false,
     },
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+    }
 });
 const Todo = mongoose.model("Todo", todoSchema);
 module.exports = Todo

@@ -90,7 +90,7 @@ const UserController = {
             const todo = new Todo({
                 title,
                 description,
-                userId
+                userId : userId
             });
             await todo.save();
             res.status(201).json({ message: 'Todo created successfully', todo });
