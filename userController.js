@@ -114,6 +114,26 @@ const UserController = {
         res.status(500).json({ message: error.message });
        }
     },
+    //update todo
+    UpdateTodo : async (req,res) => {
+        try {
+            const todoId = req.params.id;  // Get the todo ID from the request parameters
+            const { Status } = req.body;   // Get the new Status from the request body
+    
+            // Find the todo by its ID and update its Status
+            const updatedTodo = await Todo.findByIdAndUpdate(todoId, { Status }, { new: true });
+    
+            // If the todo is not found, return a 404 error
+            if (!updatedTodo) {
+                return res.status(404).json({ message: 'Todo not found' });
+            }
+    
+            // Respond with success and the updated todo data
+            res.status(200).json({ message: 'Todo updated successfully', todo: updatedTodo });
+        } catch (error) {
+            res.status(500).json({ message: error.message });
+        }
+    },
 
     //delete a todo
     DeleteTodo : async (req,res) => {
