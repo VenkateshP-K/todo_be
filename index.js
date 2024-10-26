@@ -14,7 +14,7 @@ app.use(express.json());
 app.use(morgan('dev'));
 app.use(cookieParser());
 const corsOptions = {
-    origin: ['http://localhost:5173','https://classy-cascaron-3d7dae.netlify.app','https://todo-be-nlai.onrender.com'],
+    origin: ['http://localhost:5173','https://simple-todo-vp.netlify.app','https://todo-be-nlai.onrender.com'],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
